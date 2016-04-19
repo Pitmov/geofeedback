@@ -1,0 +1,80 @@
+html, body {
+    height: 100%;
+}
+
+.feedback-form {
+    width: 450px;
+    background: #fff;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    padding-bottom: 10px;
+    height: 670px;
+}
+
+.header-form {
+    background: #FF8663;
+    padding: 10px;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    color: #fff;
+}
+
+.all-messages {
+    height: 250px;
+    overflow-y: auto;
+    padding: 10px;
+}
+
+.input-elements {
+    padding: 14px;
+}
+
+.footer-form {
+    text-align: right;
+}
+
+.add-btn {
+    background: #FF8663;
+    color: #fff;
+}
+
+.you-feedback {
+    color: #FF8663;
+    font-weight: bold;
+}
+
+.input-elements input {
+    margin-bottom: 10px;
+}
+
+.form-field[name="feedback"] {
+    height: 200px;
+}
+
+.close-button {
+    float: right;
+    margin-top: 2px;
+    cursor: pointer;
+}
+
+.close-button:hover {
+    color: #eee;
+}
+
+.close-button:active {
+    top: 2px;
+}
+
+#feedback-area {
+    position: fixed;
+}
+
+@media only screen
+and (max-width : 460px) ,
+screen and (max-height: 680px) {
+    #feedback-area {
+        position: absolute !important;
+        top: 0px !important;
+        left: 0px !important;
+    }
+}
