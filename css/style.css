@@ -3,12 +3,12 @@ html, body {
 }
 
 .feedback-form {
-    width: 450px;
+    width: 350px;
     background: #fff;
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
     padding-bottom: 10px;
-    height: 670px;
+    height: 517px;
 }
 
 .header-form {
@@ -20,7 +20,7 @@ html, body {
 }
 
 .all-messages {
-    height: 250px;
+    height: 180px;
     overflow-y: auto;
     padding: 10px;
 }
@@ -31,6 +31,7 @@ html, body {
 
 .footer-form {
     text-align: right;
+    padding-right: 14px;
 }
 
 .add-btn {
@@ -48,7 +49,7 @@ html, body {
 }
 
 .form-field[name="feedback"] {
-    height: 200px;
+    height: 100px;
 }
 
 .close-button {
@@ -70,8 +71,8 @@ html, body {
 }
 
 @media only screen
-and (max-width : 460px) ,
-screen and (max-height: 680px) {
+and (max-width : 360px) ,
+screen and (max-height: 527px) {
     #feedback-area {
         position: absolute !important;
         top: 0px !important;

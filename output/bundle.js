@@ -86,7 +86,7 @@
 
 
 	// module
-	exports.push([module.id, "html, body {\n    height: 100%;\n}\n\n.feedback-form {\n    width: 450px;\n    background: #fff;\n    border-top-left-radius: 10px;\n    border-top-right-radius: 10px;\n    padding-bottom: 10px;\n    height: 670px;\n}\n\n.header-form {\n    background: #FF8663;\n    padding: 10px;\n    border-top-left-radius: 10px;\n    border-top-right-radius: 10px;\n    color: #fff;\n}\n\n.all-messages {\n    height: 250px;\n    overflow-y: auto;\n    padding: 10px;\n}\n\n.input-elements {\n    padding: 14px;\n}\n\n.footer-form {\n    text-align: right;\n}\n\n.add-btn {\n    background: #FF8663;\n    color: #fff;\n}\n\n.you-feedback {\n    color: #FF8663;\n    font-weight: bold;\n}\n\n.input-elements input {\n    margin-bottom: 10px;\n}\n\n.form-field[name=\"feedback\"] {\n    height: 200px;\n}\n\n.close-button {\n    float: right;\n    margin-top: 2px;\n    cursor: pointer;\n}\n\n.close-button:hover {\n    color: #eee;\n}\n\n.close-button:active {\n    top: 2px;\n}\n\n#feedback-area {\n    position: fixed;\n}\n\n@media only screen\nand (max-width : 460px) ,\nscreen and (max-height: 680px) {\n    #feedback-area {\n        position: absolute !important;\n        top: 0px !important;\n        left: 0px !important;\n    }\n}\n", ""]);
+	exports.push([module.id, "html, body {\r\n    height: 100%;\r\n}\r\n\r\n.feedback-form {\r\n    width: 350px;\r\n    background: #fff;\r\n    border-top-left-radius: 10px;\r\n    border-top-right-radius: 10px;\r\n    padding-bottom: 10px;\r\n    height: 517px;\r\n}\r\n\r\n.header-form {\r\n    background: #FF8663;\r\n    padding: 10px;\r\n    border-top-left-radius: 10px;\r\n    border-top-right-radius: 10px;\r\n    color: #fff;\r\n}\r\n\r\n.all-messages {\r\n    height: 180px;\r\n    overflow-y: auto;\r\n    padding: 10px;\r\n}\r\n\r\n.input-elements {\r\n    padding: 14px;\r\n}\r\n\r\n.footer-form {\r\n    text-align: right;\r\n    padding-right: 14px;\r\n}\r\n\r\n.add-btn {\r\n    background: #FF8663;\r\n    color: #fff;\r\n}\r\n\r\n.you-feedback {\r\n    color: #FF8663;\r\n    font-weight: bold;\r\n}\r\n\r\n.input-elements input {\r\n    margin-bottom: 10px;\r\n}\r\n\r\n.form-field[name=\"feedback\"] {\r\n    height: 100px;\r\n}\r\n\r\n.close-button {\r\n    float: right;\r\n    margin-top: 2px;\r\n    cursor: pointer;\r\n}\r\n\r\n.close-button:hover {\r\n    color: #eee;\r\n}\r\n\r\n.close-button:active {\r\n    top: 2px;\r\n}\r\n\r\n#feedback-area {\r\n    position: fixed;\r\n}\r\n\r\n@media only screen\r\nand (max-width : 360px) ,\r\nscreen and (max-height: 527px) {\r\n    #feedback-area {\r\n        position: absolute !important;\r\n        top: 0px !important;\r\n        left: 0px !important;\r\n    }\r\n}\r\n", ""]);
 
 	// exports
 
@@ -411,9 +411,11 @@
 	        var defaultOptions = {
 	                mapId: 'map',
 	                feedbackAreaId: 'feedback-area',
-	                closeButtonClass: 'close-button'
+	                closeButtonClass: 'close-button',
+	                addButtonId: 'addButton'
 	            },
-	            _this = this;
+	            _this = this,
+	            currentObject = {};
 
 	        options = options || defaultOptions;
 
@@ -429,29 +431,47 @@
 	            });
 	        };
 
-	        this.renderForm = function(jsonInfo, pagePixels) {
+	        this.renderForm = function (jsonInfo, pagePixels) {
 	            var form = mustache.render(template, jsonInfo),
 	                el = document.getElementById(options.feedbackAreaId),
-	             windowWidth = window.innerWidth
-	                || document.documentElement.clientWidth
-	                || document.body.clientWidth,
+	                windowWidth = window.innerWidth
+	                    || document.documentElement.clientWidth
+	                    || document.body.clientWidth,
 	                windowHeight = window.innerHeight
-	                || document.documentElement.clientHeight
-	                || document.body.clientHeight;
+	                    || document.documentElement.clientHeight
+	                    || document.body.clientHeight;
 
-	            const elementheightLenght = 670;
-	            const elementwidthLenght = 450;
+	            const elementheightLenght = 517;
+	            const elementwidthLenght = 350;
 
-	            if (((pagePixels[0]+elementwidthLenght) <  windowWidth) &&
-	                ((pagePixels[1]+elementheightLenght) <  windowHeight)) {
+	            if (((pagePixels[0] + elementwidthLenght) < windowWidth) &&
+	                ((pagePixels[1] + elementheightLenght) < windowHeight)) {
 	                el.style.left = pagePixels[0] + 'px';
 	                el.style.top = pagePixels[1] + 'px';
 	            } else {
-	                el.style.left = (windowWidth/2) - (elementwidthLenght/2) + 'px';
-	                el.style.top = (windowHeight/2) - (elementheightLenght/2) + 'px';
+	                el.style.left = (windowWidth / 2) - (elementwidthLenght / 2) + 'px';
+	                el.style.top = (windowHeight / 2) - (elementheightLenght / 2) + 'px';
 	            }
 
 	            el.innerHTML = form;
+	            currentObject.html =  el.firstChild;
+	            currentObject.info = jsonInfo;
+	        };
+
+	        this.createCluster = function () {
+	            return new ymaps.Clusterer({
+	                preset: 'islands#invertedVioletClusterIcons',
+	                groupByCoordinates: false,
+	                clusterDisableClickZoom: true,
+	                clusterHideIconOnBalloonOpen: false,
+	                geoObjectHideIconOnBalloonOpen: false,
+	                clusterBalloonContentLayout: 'cluster#balloonCarousel',
+	                //clusterBalloonItemContentLayout: customItemContentLayout,
+	                clusterBalloonPanelMaxMapArea: 0,
+	                clusterBalloonContentLayoutWidth: 200,
+	                clusterBalloonContentLayoutHeight: 130,
+	                clusterBalloonPagerSize: 5
+	            });
 	        };
 
 	        this.initMap = function (callback) {
@@ -472,57 +492,80 @@
 	            new Promise(function (resolve, reject) {
 	                navigator.geolocation.getCurrentPosition(resolve, reject);
 	            }).then(function (position) {
-	                    return new Promise(function (resolve, reject) {
-	                        ymaps.ready(resolve.bind(null, position.coords));
-	                    });
-	                }, function (e) {
-	                    switch (e.code) {
-	                        case e.PERMISSION_DENIED:
-	                            alert('Sorry, you denied your coordinates');
-	                            break;
-	                        case e.POSITION_UNAVAILABLE:
-	                            alert('Sorry, location information is unavailable');
-	                            break;
-	                        case e.TIMEOUT:
-	                            alert('Sorry, timeout while getting you coordinates');
-	                            break;
-	                        case e.UNKNOWN_ERROR:
-	                            alert('Sorry, something wrong');
-	                            break;
-	                    }
-	                    return new Promise(function (resolve, reject) {
-	                        ymaps.ready(resolve.bind(null, centerOfSpb));
-	                    });
-	                }).then(function (position) {
-	                    var map = init(position);
-	                    if (typeof callback === 'function') {
-	                        callback(map);
-	                    }
-	                }).catch(function (e) {
-	                    console.log(e);
-	                    alert('Something wrong!');
+	                return new Promise(function (resolve, reject) {
+	                    ymaps.ready(resolve.bind(null, position.coords));
 	                });
+	            }, function (e) {
+	                switch (e.code) {
+	                    case e.PERMISSION_DENIED:
+	                        alert('Sorry, you denied your coordinates');
+	                        break;
+	                    case e.POSITION_UNAVAILABLE:
+	                        alert('Sorry, location information is unavailable');
+	                        break;
+	                    case e.TIMEOUT:
+	                        alert('Sorry, timeout while getting you coordinates');
+	                        break;
+	                    case e.UNKNOWN_ERROR:
+	                        alert('Sorry, something wrong');
+	                        break;
+	                }
+	                return new Promise(function (resolve, reject) {
+	                    ymaps.ready(resolve.bind(null, centerOfSpb));
+	                });
+	            }).then(function (position) {
+	                var map = init(position);
+	                if (typeof callback === 'function') {
+	                    callback(map);
+	                }
+	            }).catch(function (e) {
+	                console.log(e);
+	                alert('Something wrong!');
+	            });
 
 	        };
 
-	        this.initEvents = function(map) {
-	            map.events.add('click', function(e) {
+	        this.initEvents = function (map, clusterer) {
+	            map.events.add('click', function (e) {
 	                var coords = e.get('coords');
-	                getAddress(coords, function(result) {
-	                   _this.renderForm({placeName: result.text }, e.get('pagePixels'));
+	                getAddress(coords, function (result) {
+	                    currentObject.coords = coords;
+	                    _this.renderForm({placeName: result.text}, e.get('pagePixels'));
 	                });
 	            });
 
-	            document.addEventListener('click', function(e) {
+	            document.addEventListener('click', function (e) {
 	                if (e.target.classList && e.target.classList.contains(options.closeButtonClass)) {
-	                    e.target.parentNode.parentNode.classList.add('hide');
+	                    currentObject.html.classList.add('hide');
 	                }
 	            });
+
+	            document.addEventListener('click', function (e) {
+	                if (e.target.getAttribute("id") === options.addButtonId) {
+	                    var placeMark = new ymaps.Placemark(currentObject.coords, {
+	                        balloonContent: currentObject.info.placeName
+	                    }, {
+	                        preset: 'islands#icon',
+	                        iconColor: '#CC65FF'
+	                    });
+	                    clusterer.add(placeMark);
+	                    map.geoObjects.add(clusterer);
+	                    currentObject.html.classList.add('hide');
+	                }
+	            });
+	            //on button add actions goes here
+	            //placemark examples
+	            //myPlacemark = new ymaps.Placemark([55.76, 37.64], {
+	            //    hintContent: 'Москва!',
+	            //    balloonContent: 'Столица России'
+	            //});
+	            //
+	            //myMap.geoObjects.add(myPlacemark);
 	        };
 
 	        this.init = function () {
-	            this.initMap(function(map) {
-	                _this.initEvents(map);
+	            this.initMap(function (map) {
+	                _this.initEvents(map, _this.createCluster());
 	            });
 	        }
 	    }
@@ -1170,7 +1213,7 @@
 /* 7 */
 /***/ function(module, exports) {
 
-	module.exports = "<div class=\"container feedback-form\">\n    <div class=\"header-form row\">{{placeName}}<span class=\"close-button glyphicon glyphicon-remove\"></span></div>\n    <div class=\"all-messages row\">\n        {{#messages}}\n        <b>{{placeName}}</b><span class=\"dateInfo\">{{date}}</span>\n        <div class=\"messageInfo\">{{message}}</div>\n        {{/messages}}\n        {{^messages}}\n        Отзывов пока нет...\n        {{/messages}}\n    </div>\n    <div class=\"input-elements row\">\n        <div class=\"you-feedback\">ВАШ ОТЗЫВ</div>\n        <input name=\"name\" type=\"text\" value=\"\" placeholder=\"Ваше имя\" class=\"form-field form-control\" />\n        <input name=\"place\" type=\"text\" value=\"\" placeholder=\"Укажите место\" class=\"form-field form-control\" />\n        <textarea name=\"feedback\" class=\"form-field form-control\" placeholder=\"Поделитесь впечатлениями\"></textarea>\n    </div>\n    <div class=\"footer-form\"><button type=\"button\" class=\"btn add-btn\">Добавить</button></div>\n</div>";
+	module.exports = "<div class=\"container feedback-form\">\r\n    <div class=\"header-form row\">{{placeName}}<span class=\"close-button glyphicon glyphicon-remove\"></span></div>\r\n    <div class=\"all-messages row\">\r\n        {{#messages}}\r\n        <b>{{placeName}}</b><span class=\"dateInfo\">{{date}}</span>\r\n        <div class=\"messageInfo\">{{message}}</div>\r\n        {{/messages}}\r\n        {{^messages}}\r\n        Отзывов пока нет...\r\n        {{/messages}}\r\n    </div>\r\n    <div class=\"input-elements row\">\r\n        <div class=\"you-feedback\">ВАШ ОТЗЫВ</div>\r\n        <input name=\"name\" type=\"text\" value=\"\" placeholder=\"Ваше имя\" class=\"form-field form-control\" />\r\n        <input name=\"place\" type=\"text\" value=\"\" placeholder=\"Укажите место\" class=\"form-field form-control\" />\r\n        <textarea name=\"feedback\" class=\"form-field form-control\" placeholder=\"Поделитесь впечатлениями\"></textarea>\r\n    </div>\r\n    <div class=\"footer-form row\"><button id=\"addButton\" type=\"button\" class=\"btn add-btn\">Добавить</button></div>\r\n</div>";
 
 /***/ }
 /******/ ]);
