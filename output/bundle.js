@@ -48,7 +48,9 @@
 	var GeoFeedBack = __webpack_require__(5);
 	(function () {
 	    var geofeedback = new GeoFeedBack();
-	    geofeedback.init();
+	    document.addEventListener("DOMContentLoaded", function() {
+	        geofeedback.init();
+	    });
 	})();
 
 /***/ },
@@ -86,7 +88,7 @@
 
 
 	// module
-	exports.push([module.id, "html, body {\r\n    height: 100%;\r\n}\r\n\r\n.feedback-form {\r\n    width: 350px;\r\n    background: #fff;\r\n    border-top-left-radius: 10px;\r\n    border-top-right-radius: 10px;\r\n    padding-bottom: 10px;\r\n    height: 517px;\r\n}\r\n\r\n.header-form {\r\n    background: #FF8663;\r\n    padding: 10px;\r\n    border-top-left-radius: 10px;\r\n    border-top-right-radius: 10px;\r\n    color: #fff;\r\n}\r\n\r\n.all-messages {\r\n    height: 180px;\r\n    overflow-y: auto;\r\n    padding: 10px;\r\n}\r\n\r\n.input-elements {\r\n    padding: 14px;\r\n}\r\n\r\n.footer-form {\r\n    text-align: right;\r\n    padding-right: 14px;\r\n}\r\n\r\n.add-btn {\r\n    background: #FF8663;\r\n    color: #fff;\r\n}\r\n\r\n.you-feedback {\r\n    color: #FF8663;\r\n    font-weight: bold;\r\n}\r\n\r\n.input-elements input {\r\n    margin-bottom: 10px;\r\n}\r\n\r\n.form-field[name=\"feedback\"] {\r\n    height: 100px;\r\n}\r\n\r\n.close-button {\r\n    float: right;\r\n    margin-top: 2px;\r\n    cursor: pointer;\r\n}\r\n\r\n.close-button:hover {\r\n    color: #eee;\r\n}\r\n\r\n.close-button:active {\r\n    top: 2px;\r\n}\r\n\r\n#feedback-area {\r\n    position: fixed;\r\n}\r\n\r\n@media only screen\r\nand (max-width : 360px) ,\r\nscreen and (max-height: 527px) {\r\n    #feedback-area {\r\n        position: absolute !important;\r\n        top: 0px !important;\r\n        left: 0px !important;\r\n    }\r\n}\r\n", ""]);
+	exports.push([module.id, "html, body {\n    height: 100%;\n}\n\n.feedback-form {\n    width: 350px;\n    background: #fff;\n    border-top-left-radius: 10px;\n    border-top-right-radius: 10px;\n    padding-bottom: 10px;\n    height: 517px;\n}\n\n.header-form {\n    background: #FF8663;\n    padding: 10px;\n    border-top-left-radius: 10px;\n    border-top-right-radius: 10px;\n    color: #fff;\n    height: 40px;\n}\n\n.all-messages {\n    height: 180px;\n    overflow-y: auto;\n    padding: 10px;\n    word-wrap: break-word;\n}\n\n.input-elements {\n    padding: 14px;\n}\n\n.footer-form {\n    text-align: right;\n    padding-right: 14px;\n}\n\n.add-btn {\n    background: #FF8663;\n    color: #fff;\n}\n\n.you-feedback {\n    color: #FF8663;\n    font-weight: bold;\n}\n\n.input-elements input {\n    margin-bottom: 10px;\n}\n\n.form-field[name=\"feedback\"] {\n    height: 100px;\n}\n\n.close-button {\n    float: right;\n    margin-top: 2px;\n    cursor: pointer;\n}\n\n.close-button:hover {\n    color: #eee;\n}\n\n.close-button:active {\n    top: 2px;\n}\n\n.place-info {\n    float: left;\n    width: 310px;\n    position: fixed;\n    overflow: hidden;\n}\n\n.place-info span.address-text {\n    display: block;\n    width: 1000px;\n}\n\n#feedback-area {\n    position: fixed;\n}\n\n@media only screen\nand (max-width: 360px) , screen and (max-height: 527px) {\n    #feedback-area {\n        position: absolute !important;\n        top: 0px !important;\n        left: 0px !important;\n    }\n}\n\n.feedback-message {\n    margin-bottom: 10px;\n}\n\n.ballon_footer {\n    float: right;\n    color: #ccc;\n}\n\n.ballon_body {\n    height: 141px;\n    font-size: 14px;\n}\n\n.addressLink {\n    display: block;\n}\n\n#loader {\n    position: fixed;\n    background: #FF8663;\n    width: 400px;\n    height: 200px;\n    margin: 0 auto;\n    top: 33%;\n    text-align: center;\n    left: 40%;\n    font-size: 69px;\n    padding-top: 45px;\n    opacity: 0.8;\n    color: #fff;\n}", ""]);
 
 	// exports
 
@@ -405,14 +407,20 @@
 
 	(function () {
 	    var mustache = __webpack_require__(6),
-	        template = __webpack_require__(7);
+	        template = __webpack_require__(7),
+	        templateMessage = __webpack_require__(8),
+	        clusterTemplate = __webpack_require__(9);
 
 	    function GeoFeedBack(options) {
 	        var defaultOptions = {
 	                mapId: 'map',
 	                feedbackAreaId: 'feedback-area',
 	                closeButtonClass: 'close-button',
-	                addButtonId: 'addButton'
+	                addButtonId: 'addButton',
+	                messageAreaClass: 'all-messages',
+	                noFeedbackMessageId: "noFeedback",
+	                addressLinkClass: "addressLink",
+	                loaderId: "loader"
 	            },
 	            _this = this,
 	            currentObject = {};
@@ -444,8 +452,8 @@
 	            const elementheightLenght = 517;
 	            const elementwidthLenght = 350;
 
-	            if (((pagePixels[0] + elementwidthLenght) < windowWidth) &&
-	                ((pagePixels[1] + elementheightLenght) < windowHeight)) {
+	            if (pagePixels && (((pagePixels[0] + elementwidthLenght) < windowWidth) &&
+	                ((pagePixels[1] + elementheightLenght) < windowHeight))) {
 	                el.style.left = pagePixels[0] + 'px';
 	                el.style.top = pagePixels[1] + 'px';
 	            } else {
@@ -454,11 +462,13 @@
 	            }
 
 	            el.innerHTML = form;
-	            currentObject.html =  el.firstChild;
+	            currentObject.html = el.firstChild;
 	            currentObject.info = jsonInfo;
+	            document.getElementsByClassName(options.messageAreaClass)[0].scrollTop = 100000;
 	        };
 
 	        this.createCluster = function () {
+	            var customContentLayout = ymaps.templateLayoutFactory.createClass(clusterTemplate);
 	            return new ymaps.Clusterer({
 	                preset: 'islands#invertedVioletClusterIcons',
 	                groupByCoordinates: false,
@@ -466,12 +476,135 @@
 	                clusterHideIconOnBalloonOpen: false,
 	                geoObjectHideIconOnBalloonOpen: false,
 	                clusterBalloonContentLayout: 'cluster#balloonCarousel',
-	                //clusterBalloonItemContentLayout: customItemContentLayout,
+	                clusterBalloonItemContentLayout: customContentLayout,
 	                clusterBalloonPanelMaxMapArea: 0,
-	                clusterBalloonContentLayoutWidth: 200,
-	                clusterBalloonContentLayoutHeight: 130,
+	                clusterBalloonContentLayoutWidth: 400,
+	                clusterBalloonContentLayoutHeight: 230,
 	                clusterBalloonPagerSize: 5
 	            });
+	        };
+
+	        this.sendJsonData = function (jsonData, callback) {
+	            var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance
+	            xmlhttp.open("POST", "http://localhost:3000", true);
+	            xmlhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+	            xmlhttp.send(JSON.stringify(jsonData));
+	            xmlhttp.onreadystatechange = function () {
+	                if (xmlhttp.readyState != 4) return;
+
+	                if (xmlhttp.status != 200) {
+	                    throw new Error('Ошибка при передачи данных серверу');
+	                    return;
+	                }
+
+	                if (typeof callback === 'function') {
+	                    callback(xmlhttp.responseText);
+	                }
+
+	            }
+	        };
+
+	        this.getJsonData = function (address, callback) {
+	            var xmlhttp = new XMLHttpRequest(),
+	                jsonData = {};   // new HttpRequest instance
+	            xmlhttp.open("POST", "http://localhost:3000", true);
+	            xmlhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+	            if (!address) {
+	                jsonData.op = 'all';
+	            } else {
+	                jsonData.op = 'get';
+	                jsonData.address = address;
+	            }
+	            xmlhttp.send(JSON.stringify(jsonData));
+	            xmlhttp.onreadystatechange = function () {
+	                if (xmlhttp.readyState != 4) return;
+
+	                if (xmlhttp.status != 200) {
+	                    throw new Error('Ошибка при передачи данных серверу');
+	                    return;
+	                }
+
+	                if (typeof callback === 'function') {
+	                    callback(xmlhttp.responseText);
+	                }
+
+	            }
+	        };
+
+	        this.convertDate = function (dateValue) {
+	            var date = new Date(dateValue),
+	                day = "0" + date.getDate(),
+	                month = "0" + (date.getMonth() + 1),
+	                year = date.getFullYear(),
+	                hours = date.getHours(),
+	                minutes = "0" + date.getMinutes(),
+	                seconds = "0" + date.getSeconds()
+	            return day.substr(-2) + '.' + month.substr(-2) + '.' + year + ' '
+	                + hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
+	        };
+
+	        this.renderMessage = function (jsonData) {
+	            jsonData.date = this.convertDate(jsonData.date);
+	            var messageHtml = mustache.render(templateMessage, jsonData);
+	            document.getElementsByClassName(options.messageAreaClass)[0].
+	                insertAdjacentHTML('beforeend', messageHtml);
+	            document.getElementsByClassName(options.messageAreaClass)[0].scrollTop = 100000;
+	            this.clearFields();
+	        };
+
+	        this.clearFields = function () {
+	            document.getElementsByName('name')[0].value = '';
+	            document.getElementsByName('place')[0].value = '';
+	            document.getElementsByName('feedback')[0].value = '';
+	        };
+
+	        this.addFeedback = function (map, clusterer) {
+	            var name = document.getElementsByName('name')[0].value,
+	                place = document.getElementsByName('place')[0].value,
+	                text = document.getElementsByName('feedback')[0].value;
+	            if (name.trim().length > 0 && place.trim().length > 0 && text.trim().length > 0) {
+	                new Promise(function (resolve, reject) {
+	                    _this.sendJsonData({
+	                        op: 'add',
+	                        review: {
+	                            coords: {
+	                                x: currentObject.coords[0],
+	                                y: currentObject.coords[1]
+	                            },
+	                            address: currentObject.info.address,
+	                            name: name,
+	                            place: place,
+	                            text: text
+	                        }
+	                    }, resolve);
+	                }).then(function (result) {
+	                        var jsonData = JSON.parse(result)[JSON.parse(result).length - 1];
+	                        var placeMark = new ymaps.Placemark([jsonData.coords.x, jsonData.coords.y], {
+	                            balloonContentHeader: jsonData.place,
+	                            balloonContentBody: {
+	                                address: currentObject.info.address,
+	                                text: jsonData.text,
+	                                x: jsonData.coords.x,
+	                                y: jsonData.coords.y
+	                            },
+	                            balloonContentFooter: _this.convertDate(jsonData.date)
+	                        }, {
+	                            preset: 'islands#icon',
+	                            iconColor: '#CC65FF',
+	                            openBalloonOnClick: false
+	                        });
+	                        if (document.getElementById(options.noFeedbackMessageId)) {
+	                            document.getElementById(options.noFeedbackMessageId).classList.add('hide');
+	                        }
+	                        _this.renderMessage(jsonData);
+	                        clusterer.add(placeMark);
+	                        map.geoObjects.add(clusterer);
+	                    }).catch(function (e) {
+	                        alert(e.message);
+	                    });
+	            } else {
+	                alert('Все поля необходимо заполнить');
+	            }
 	        };
 
 	        this.initMap = function (callback) {
@@ -492,45 +625,115 @@
 	            new Promise(function (resolve, reject) {
 	                navigator.geolocation.getCurrentPosition(resolve, reject);
 	            }).then(function (position) {
-	                return new Promise(function (resolve, reject) {
-	                    ymaps.ready(resolve.bind(null, position.coords));
+	                    return new Promise(function (resolve, reject) {
+	                        ymaps.ready(resolve.bind(null, position.coords));
+	                    });
+	                }, function (e) {
+	                    switch (e.code) {
+	                        case e.PERMISSION_DENIED:
+	                            alert('Sorry, you denied your coordinates');
+	                            break;
+	                        case e.POSITION_UNAVAILABLE:
+	                            alert('Sorry, location information is unavailable');
+	                            break;
+	                        case e.TIMEOUT:
+	                            alert('Sorry, timeout while getting you coordinates');
+	                            break;
+	                        case e.UNKNOWN_ERROR:
+	                            alert('Sorry, something wrong');
+	                            break;
+	                    }
+	                    return new Promise(function (resolve, reject) {
+	                        ymaps.ready(resolve.bind(null, centerOfSpb));
+	                    });
+	                }).then(function (position) {
+	                    var map = init(position);
+	                    if (typeof callback === 'function') {
+	                        callback(map);
+	                    }
+	                }).catch(function (e) {
+	                    console.log(e);
+	                    alert('Something wrong!');
 	                });
-	            }, function (e) {
-	                switch (e.code) {
-	                    case e.PERMISSION_DENIED:
-	                        alert('Sorry, you denied your coordinates');
-	                        break;
-	                    case e.POSITION_UNAVAILABLE:
-	                        alert('Sorry, location information is unavailable');
-	                        break;
-	                    case e.TIMEOUT:
-	                        alert('Sorry, timeout while getting you coordinates');
-	                        break;
-	                    case e.UNKNOWN_ERROR:
-	                        alert('Sorry, something wrong');
-	                        break;
-	                }
-	                return new Promise(function (resolve, reject) {
-	                    ymaps.ready(resolve.bind(null, centerOfSpb));
+
+	        };
+
+	        this.buildPlaceMarks = function (jsonData) {
+	            var placemarks = [],
+	                allAddresses = Object.keys(jsonData);
+
+	            allAddresses.forEach(function (el) {
+	                var curElement = jsonData[el];
+	                curElement.forEach(function (curEl) {
+	                    placemarks.push(new ymaps.Placemark([curEl.coords.x, curEl.coords.y], {
+	                        balloonContentHeader: curEl.place,
+	                        balloonContentBody: {
+	                            address: el,
+	                            text: curEl.text,
+	                            x: curEl.coords.x,
+	                            y: curEl.coords.y
+	                        },
+	                        balloonContentFooter: _this.convertDate(curEl.date)
+	                    }, {
+	                        iconColor: '#CC65FF',
+	                        openBalloonOnClick: false
+	                    }));
 	                });
-	            }).then(function (position) {
-	                var map = init(position);
-	                if (typeof callback === 'function') {
-	                    callback(map);
-	                }
-	            }).catch(function (e) {
-	                console.log(e);
-	                alert('Something wrong!');
+
 	            });
 
+	            return placemarks;
+	        };
+
+	        this.showLoader = function() {
+	            document.getElementById(options.loaderId).classList.remove('hide');
+	        };
+
+	        this.hideLoader = function() {
+	            document.getElementById(options.loaderId).classList.add('hide');
+	        };
+
+	        this.openForm = function(address, x, y, map, callback) {
+	            _this.getJsonData(address, function (result) {
+	                var jsonData = JSON.parse(result).map(function(el) {
+	                    el.date = _this.convertDate(el.date);
+	                    return el;
+	                });
+	                jsonData = {
+	                    messages: jsonData,
+	                    address: address
+	                };
+	                currentObject.coords = [x, y];
+	                _this.renderForm(jsonData);
+	                map.balloon.close();
+	                if (typeof callback === 'function') {
+	                    callback();
+	                }
+	            });
 	        };
 
 	        this.initEvents = function (map, clusterer) {
 	            map.events.add('click', function (e) {
+	                map.balloon.close();
 	                var coords = e.get('coords');
 	                getAddress(coords, function (result) {
-	                    currentObject.coords = coords;
-	                    _this.renderForm({placeName: result.text}, e.get('pagePixels'));
+	                    var address = result.text;
+	                    _this.showLoader();
+	                    new Promise(function(resolve) {
+	                        _this.getJsonData(address, resolve);
+	                    }).then(function(result) {
+	                            var jsonData = JSON.parse(result).map(function(el) {
+	                                el.date = _this.convertDate(el.date);
+	                                return el;
+	                            });
+	                            jsonData = {
+	                                messages: jsonData,
+	                                address: address
+	                            };
+	                            _this.renderForm(jsonData, e.get('pagePixels'));
+	                            currentObject.coords = coords;
+	                            _this.hideLoader();
+	                        });
 	                });
 	            });
 
@@ -538,21 +741,37 @@
 	                if (e.target.classList && e.target.classList.contains(options.closeButtonClass)) {
 	                    currentObject.html.classList.add('hide');
 	                }
+
+	                if (e.target.getAttribute("id") === options.addButtonId) {
+	                    _this.addFeedback(map, clusterer);
+	                }
+
+	                if (e.target.classList && e.target.classList.contains(options.addressLinkClass)) {
+	                    _this.showLoader();
+	                    _this.openForm(e.target.dataset.address, e.target.dataset.x, e.target.dataset.y, map, function() {
+	                        _this.hideLoader();
+	                    });
+	                }
 	            });
 
-	            document.addEventListener('click', function (e) {
-	                if (e.target.getAttribute("id") === options.addButtonId) {
-	                    var placeMark = new ymaps.Placemark(currentObject.coords, {
-	                        balloonContent: currentObject.info.placeName
-	                    }, {
-	                        preset: 'islands#icon',
-	                        iconColor: '#CC65FF'
-	                    });
-	                    clusterer.add(placeMark);
-	                    map.geoObjects.add(clusterer);
+	            document.addEventListener('keyup', function (e) {
+	                if (e.keyCode === 27 && currentObject.html) {
 	                    currentObject.html.classList.add('hide');
 	                }
 	            });
+
+	            map.geoObjects.events.add('click', function (e) {
+	                var object = e.get('target'),
+	                    element = object.properties.get('balloonContentBody');
+	                if (element) {
+	                    e.stopImmediatePropagation();
+	                    _this.showLoader();
+	                    _this.openForm(element.address, element.x, element.y, map, function() {
+	                        _this.hideLoader();
+	                    });
+	                }
+	            });
+
 	            //on button add actions goes here
 	            //placemark examples
 	            //myPlacemark = new ymaps.Placemark([55.76, 37.64], {
@@ -564,9 +783,26 @@
 	        };
 
 	        this.init = function () {
-	            this.initMap(function (map) {
-	                _this.initEvents(map, _this.createCluster());
-	            });
+	            var map,
+	                clusterer;
+	            _this.showLoader();
+	            new Promise(function (resolve, reject) {
+	                _this.initMap(resolve);
+	            }).then(function (result) {
+	                    map = result;
+	                    return new Promise(function (resolve) {
+	                        _this.getJsonData(null, resolve);
+	                    });
+	                }).then(function (result) {
+	                    clusterer = _this.createCluster();
+	                    clusterer.add(_this.buildPlaceMarks(JSON.parse(result)));
+	                    map.geoObjects.add(clusterer);
+	                    _this.initEvents(map, clusterer);
+	                    _this.hideLoader();
+	                }).catch(function (e) {
+	                    alert('Initialization failed');
+	                    console.log(e);
+	                });
 	        }
 	    }
 
@@ -1213,7 +1449,19 @@
 /* 7 */
 /***/ function(module, exports) {
 
-	module.exports = "<div class=\"container feedback-form\">\r\n    <div class=\"header-form row\">{{placeName}}<span class=\"close-button glyphicon glyphicon-remove\"></span></div>\r\n    <div class=\"all-messages row\">\r\n        {{#messages}}\r\n        <b>{{placeName}}</b><span class=\"dateInfo\">{{date}}</span>\r\n        <div class=\"messageInfo\">{{message}}</div>\r\n        {{/messages}}\r\n        {{^messages}}\r\n        Отзывов пока нет...\r\n        {{/messages}}\r\n    </div>\r\n    <div class=\"input-elements row\">\r\n        <div class=\"you-feedback\">ВАШ ОТЗЫВ</div>\r\n        <input name=\"name\" type=\"text\" value=\"\" placeholder=\"Ваше имя\" class=\"form-field form-control\" />\r\n        <input name=\"place\" type=\"text\" value=\"\" placeholder=\"Укажите место\" class=\"form-field form-control\" />\r\n        <textarea name=\"feedback\" class=\"form-field form-control\" placeholder=\"Поделитесь впечатлениями\"></textarea>\r\n    </div>\r\n    <div class=\"footer-form row\"><button id=\"addButton\" type=\"button\" class=\"btn add-btn\">Добавить</button></div>\r\n</div>";
+	module.exports = "<div class=\"container feedback-form\">\n    <div class=\"header-form row\"><div class=\"place-info\"><span class=\"address-text\"><span class=\"glyphicon glyphicon-hand-right\"></span> {{address}}</span></div><span class=\"close-button glyphicon glyphicon-remove\"></span></div>\n    <div class=\"all-messages row\">\n        {{#messages}}\n            <div class=\"feedback-message\">\n                <b>{{name}}</b> {{place}} {{date}}\n                <br />\n                {{text}}\n            </div>\n        {{/messages}}\n        {{^messages}}\n            <span id=\"noFeedback\">Отзывов пока нет...</span>\n        {{/messages}}\n    </div>\n    <div class=\"input-elements row\">\n        <div class=\"you-feedback\">ВАШ ОТЗЫВ</div>\n        <input name=\"name\" type=\"text\" value=\"\" placeholder=\"Ваше имя\" class=\"form-field form-control\" />\n        <input name=\"place\" type=\"text\" value=\"\" placeholder=\"Укажите место\" class=\"form-field form-control\" />\n        <textarea name=\"feedback\" class=\"form-field form-control\" placeholder=\"Поделитесь впечатлениями\"></textarea>\n    </div>\n    <div class=\"footer-form row\"><button id=\"addButton\" type=\"button\" class=\"btn add-btn\">Добавить</button></div>\n</div>";
+
+/***/ },
+/* 8 */
+/***/ function(module, exports) {
+
+	module.exports = "<div class=\"feedback-message\">\n    <b>{{name}}</b> {{place}} {{date}}\n    <br />\n    {{text}}\n</div>";
+
+/***/ },
+/* 9 */
+/***/ function(module, exports) {
+
+	module.exports = "<h3 class=ballon_header>{{ properties.balloonContentHeader }}</h3>\n<div class=ballon_body><a class=\"addressLink\" data-x=\"{{properties.balloonContentBody.x}}\" data-y=\"{{properties.balloonContentBody.y}}\" data-address=\"{{ properties.balloonContentBody.address}}\" href=\"javascript:void(0);\" title=\"Показать всю информацию по этому адресу\">{{ properties.balloonContentBody.address}}</a> <br /> {{ properties.balloonContentBody.text}}</div>\n<div class=ballon_footer>{{ properties.balloonContentFooter }}</div>";
 
 /***/ }
 /******/ ]);

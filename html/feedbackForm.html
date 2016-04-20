@@ -1,12 +1,15 @@
 <div class="container feedback-form">
-    <div class="header-form row">{{placeName}}<span class="close-button glyphicon glyphicon-remove"></span></div>
+    <div class="header-form row"><div class="place-info"><span class="address-text"><span class="glyphicon glyphicon-hand-right"></span> {{address}}</span></div><span class="close-button glyphicon glyphicon-remove"></span></div>
     <div class="all-messages row">
         {{#messages}}
-        <b>{{placeName}}</b><span class="dateInfo">{{date}}</span>
-        <div class="messageInfo">{{message}}</div>
+            <div class="feedback-message">
+                <b>{{name}}</b> {{place}} {{date}}
+                <br />
+                {{text}}
+            </div>
         {{/messages}}
         {{^messages}}
-        Отзывов пока нет...
+            <span id="noFeedback">Отзывов пока нет...</span>
         {{/messages}}
     </div>
     <div class="input-elements row">
